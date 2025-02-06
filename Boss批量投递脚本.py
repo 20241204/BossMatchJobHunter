@@ -1,7 +1,7 @@
 import csv
 import datetime
 import json
-import os.path
+import os
 import time
 from turtle import st
 import requests
@@ -25,36 +25,42 @@ from  lxml import etree
     # edge 浏览器版本
     edge://version/
     # 下载 edge 提取用户登陆 cookie 插件
-    # 第一次使用脚本登陆会检测 www.zhipin.com.json 文件是否存在，不存在则给用户70秒扫码登录，提取cookie
+    j2team-cookies url：https://microsoftedge.microsoft.com/addons/detail/j2team-cookies/lmakhegealefmkbnagibiebebncemhgn?hl=en-US
+    # 第一次使用脚本登陆会检测 www.zhipin.com 的 .json 文件是否存在，不存在则给用户70秒扫码登录，提取cookie
     # 用户可以通过插件 J2TEAM-Cookie 提取 cookie 方便在其他浏览器登录boss直聘
     edge插件：J2TEAM-Cookie
 '''
 
-
 login_url='https://login.zhipin.com/?ka=header-login'
 home_url='https://www.zhipin.com/'
-# 软件测试应届 | 运维工程师
+# 软件测试应届 | 运维工程师 | ai标注
 # jobs_name='软件测试应届'
-jobs_name='运维工程师'
+# jobs_name='运维工程师'
+jobs_name='ai标注'
 # 浏览器搜索参数的链接地址 过滤条件可以自己设置再复制 url 至此
 # 北京 互联网/AI->测试 类型->全职 工作经验->应届|经验不限 薪资->3~5k 学历->本科
-# search_url=f'https://www.zhipin.com/web/geek/job?query={jobs_name}&city=101010100&experience=102,101&degree=203&position=100301,100309,100303,100304,100306,100310,100302,100305,100308,100307&jobType=1901&salary=403'
+#search_url=f'https://www.zhipin.com/web/geek/job?query={jobs_name}&city=101010100&experience=102,101&degree=203&position=100301,100309,100303,100304,100306,100310,100302,100305,100308,100307&jobType=1901&salary=403'
 # 北京 互联网/AI->运维 类型->全职 工作经验->1~3年 薪资->4~8k 学历->大专|本科
-search_url=f'https://www.zhipin.com/web/geek/job?query={jobs_name}&city=101010100&experience=104&degree=203,202&position=100401,100402,100406,100410,100408,100403,100404,100405&jobType=1901&salary=404'
-
+#search_url=f'https://www.zhipin.com/web/geek/job?query={jobs_name}&city=101010100&experience=104&degree=203,202&position=100401,100402,100406,100410,100408,100403,100404,100405&jobType=1901&salary=404'
 # 哈尔滨 自定义链接，互联网/AI->测试|运维 类型->全职 工作经验->应届生|无经验|1~3年 薪资->不限 学历->大专|本科
 # search_url=f'https://www.zhipin.com/web/geek/job?city=101050100&experience=101,104,102&degree=203,202&position=100301,100309,100303,100401,100405,100402&jobType=1901'
 
+# 厦门 互联网/AI->人工智能->数据标注/AI训练师 类型->全职 工作经验->不限经验 薪资->5~10k
+search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&position=130121&jobType=1901&salary=404'
+
+# 总页数需，也是循环次数要访问查看
+page=10
 
 # 当前目录 cookie 提取文件
 cookie_file_name='www.zhipin.com.json'
+
 # 有订阅的时候可能会报错
 subscription_close='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/a[last()]'
 # 首次进入页面关闭弹窗
 dialog_close='/html/body/div[5]/div[2]/div[1]/a[last()]'
 button_next='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/div/div/div/a[last()]'
 title_text='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/ul/li/div[1]/a/div[1]/span[1]'
-chat_text='//*[@id="main"]/div[1]/div/div/div[1]/div[3]/div[1]/a[last()]'
+chat_text='//*[@id="main"]/div[1]/div/div/div/div[3]/div[1]/div/a[last()]'
 max_text='/html/body/div[12]/div[2]/div[2]/p/text()'
 search_button='//*[@id="wrap"]/div[2]/div[1]/div[1]/div[1]/a[last()]'
 
@@ -115,7 +121,6 @@ def NodeExists(xpath):
 
 # 加载拼接链接页面
 def click_page():
-    page=10
     while True:
         page+=1
         # 范围时间
@@ -183,12 +188,19 @@ if __name__ == "__main__":
     # })
     bro.maximize_window()  # 最大化浏览器
     bro.implicitly_wait(5)  # 浏览器等待
-    if os.path.exists(f'{cookie_file_name}'):
-        print(f'cookie文件{cookie_file_name}存在')
+
+    # 获取当前工作目录
+    current_path = os.getcwd()
+
+    # 拼接 cookie_file_name 文件的路径
+    file_path = os.path.join(current_path, f'{cookie_file_name}')
+
+    if os.path.exists(f'{file_path}'):
+        print(f'cookie文件{file_path}存在')
         bro.delete_all_cookies()
         bro.get(home_url)
         # 添加使用cookie
-        with open(f'{cookie_file_name}', 'r', encoding='utf-8') as f:
+        with open(f'{file_path}', 'r', encoding='utf-8') as f:
             listCookies = json.loads(f.read())
         for cookie in listCookies:
             bro.add_cookie({
@@ -213,7 +225,7 @@ if __name__ == "__main__":
 
     else:
         # 没有 cookie 文件，获取 cookie 
-        print(f'cookie文件{cookie_file_name}不存在')
+        print(f'cookie文件{file_path}不存在')
         bro.get(login_url)
         # 给用户 70 秒时间登陆
         seconds_num=70
@@ -224,11 +236,11 @@ if __name__ == "__main__":
         print('开始获取cookid')
         cookies = bro.get_cookies()
         jsonCookies = json.dumps(cookies)
-        with open(f'{cookie_file_name}', 'w') as f:
+        with open(f'{file_path}', 'w') as f:
             f.write(jsonCookies)
         # 或者给用户 300 秒登陆提取 cookie
         seconds_num=300
         for i in range(0,seconds_num+1):
             time.sleep(1)
-            print(f'总共有{seconds_num}秒时间登陆，休眠第{i}秒')
+            print(f'总共有{seconds_num}秒时间登陆，安装 J2TEAM-Cookie 插件提取 cookie 文件，并更名为 {file_path} ，如果提取json提取成功请直接终止此过程，休眠第{i}秒')
         bro.close()
