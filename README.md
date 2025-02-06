@@ -2,7 +2,7 @@
 Boss直聘批量投递脚本，提高找工作效率。
 
 ## 描述 
-Boss直聘批量投递脚本，Boss没有批量投递功能，而且Boss回复率太低 ，为了提高找工作效率而制作，将就能用  
+Boss直聘批量投递脚本，Boss没有批量沟通功能，而且Boss回复率太低 ，为了提高找工作效率而制作，将就能用  
 ~~所以这是自用的，我不会展示图片的，只用文字的描述，这样懂我的人自然会懂，不懂的就自然会放弃~~  
 ![Watchers](https://img.shields.io/github/watchers/20241204/BossMatchJobHunter) ![Stars](https://img.shields.io/github/stars/20241204/BossMatchJobHunter) ![Forks](https://img.shields.io/github/forks/20241204/BossMatchJobHunter) ![Vistors](https://visitor-badge.laobi.icu/badge?page_id=20241204.BossMatchJobHunter) ![LICENSE](https://img.shields.io/badge/license-CC%20BY--SA%204.0-green.svg)
 <a href="https://star-history.com/#20241204/BossMatchJobHunter&Date">
