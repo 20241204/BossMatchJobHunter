@@ -54,6 +54,7 @@ page=10
 # 当前目录 cookie 提取文件
 cookie_file_name='www.zhipin.com.json'
 
+# 官方随时可能修改xpath路径，使本脚本失效
 # 有订阅的时候可能会报错
 subscription_close='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/a[last()]'
 # 首次进入页面关闭弹窗
