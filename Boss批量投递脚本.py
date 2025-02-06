@@ -48,22 +48,24 @@ jobs_name='ai标注'
 # 厦门 互联网/AI->人工智能->数据标注/AI训练师 类型->全职 工作经验->不限经验 薪资->5~10k
 search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&position=130121&jobType=1901&salary=404'
 
-# 总页数需，也是循环次数要访问查看
-page=10
-
 # 当前目录 cookie 提取文件
 cookie_file_name='www.zhipin.com.json'
 
-# 官方随时可能修改xpath路径，使本脚本失效
-# 有订阅的时候可能会报错
+# 官方随时可能更改xpath元素路径，需要及时通过浏览器开发者工具定位更新，才能保证脚本有效
+# 有订阅广告的时候可能会报错
 subscription_close='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/a[last()]'
-# 首次进入页面关闭弹窗
+# 首次进入页面关闭弹窗元素
 dialog_close='/html/body/div[5]/div[2]/div[1]/a[last()]'
-button_next='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/div/div/div/a[last()]'
-title_text='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/ul/li/div[1]/a/div[1]/span[1]'
-chat_text='//*[@id="main"]/div[1]/div/div/div/div[3]/div[1]/div/a[last()]'
-max_text='/html/body/div[12]/div[2]/div[2]/p/text()'
+# 搜索按钮元素
 search_button='//*[@id="wrap"]/div[2]/div[1]/div[1]/div[1]/a[last()]'
+# 点击岗位标题元素
+title_text='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/ul/li/div[1]/a/div[1]/span[1]'
+# 点击立即沟通元素
+chat_text='//*[@id="main"]/div[1]/div/div/div/div[3]/div[1]/div/a[last()]'
+# 沟通界面，获取发送的信息元素
+max_text='/html/body/div[12]/div[2]/div[2]/div/div[1]/div[1]/ul/li/p/text()'
+# 下一页按钮元素
+button_next='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/div/div/div/a[last()]'
 
 # 解析数据
 def parser_page():
@@ -122,6 +124,8 @@ def NodeExists(xpath):
 
 # 加载拼接链接页面
 def click_page():
+    # 总页数需，也是循环次数要访问查看
+    page=1
     while True:
         page+=1
         # 范围时间
@@ -191,7 +195,9 @@ if __name__ == "__main__":
     bro.implicitly_wait(5)  # 浏览器等待
 
     # 获取当前工作目录
-    current_path = os.getcwd()
+    #current_path = os.getcwd()
+    # 获取当前脚本所在目录
+    current_path = os.path.dirname(os.path.abspath(__file__))
 
     # 拼接 cookie_file_name 文件的路径
     file_path = os.path.join(current_path, f'{cookie_file_name}')
@@ -243,5 +249,5 @@ if __name__ == "__main__":
         seconds_num=300
         for i in range(0,seconds_num+1):
             time.sleep(1)
-            print(f'总共有{seconds_num}秒时间登陆，安装 J2TEAM-Cookie 插件提取 cookie 文件，并更名为 {file_path} ，如果提取json提取成功请直接终止此过程，休眠第{i}秒')
+            print(f'总共有{seconds_num}秒时间登陆，安装 J2TEAM-Cookie 插件提取 cookie 文件，用来导入其他浏览器可以防止被本次登录顶掉，如果提取json提取成功请直接终止此过程，休眠第{i}秒')
         bro.close()
