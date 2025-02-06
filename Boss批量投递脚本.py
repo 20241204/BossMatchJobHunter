@@ -45,8 +45,8 @@ jobs_name='ai标注'
 # 哈尔滨 自定义链接，互联网/AI->测试|运维 类型->全职 工作经验->应届生|无经验|1~3年 薪资->不限 学历->大专|本科
 # search_url=f'https://www.zhipin.com/web/geek/job?city=101050100&experience=101,104,102&degree=203,202&position=100301,100309,100303,100401,100405,100402&jobType=1901'
 
-# 厦门 互联网/AI->人工智能->数据标注/AI训练师 类型->全职 工作经验->不限经验 薪资->5~10k
-search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&position=130121&jobType=1901&salary=404'
+# 厦门 互联网/AI->人工智能->数据标注/AI训练师 类型->全职 工作经验->不限经验 薪资->不限
+search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&position=130121&jobType=1901'
 
 # 当前目录 cookie 提取文件
 cookie_file_name='www.zhipin.com.json'
