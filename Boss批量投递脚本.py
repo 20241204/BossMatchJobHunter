@@ -167,16 +167,16 @@ def click_page(page):
             if NodeExists(f'{button_next}'):
                 while True:
                     click_title()
+                    # 如果下一页按钮元素包含不许点击的class属性，就终止脚本循环
                     # if bro.find_element_by_xpath(f'{button_next}').get_attribute("class")=="disabled":
                     if bro.find_element(by=By.XPATH, value=button_next).get_attribute("class")=="disabled":
-                        continue
+                        break
                     else:
                         # bro.execute_script("arguments[0].click();", bro.find_element_by_xpath(f'{button_next}'))
                         bro.execute_script("arguments[0].click();", bro.find_element(by=By.XPATH, value=button_next))
             else:
-                print('页数走到了尽头,或者cookie失效')
-                continue
-
+                print('页数走到了尽头,或者cookie失效，退出脚本循环')
+                break
 
 if __name__ == "__main__":
     # option = webdriver.ChromeOptions()
