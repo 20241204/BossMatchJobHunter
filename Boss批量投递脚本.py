@@ -52,9 +52,9 @@ search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city
 cookie_file_name='www.zhipin.com.json'
 
 # 官方随时可能更改xpath元素路径，需要及时通过浏览器开发者工具定位更新，才能保证脚本有效
-# 有订阅广告的时候可能会报错
+# 有订阅广告的时候可能会导致元素错位而导致脚本报错，需要关闭，让所有元素在可控范围内
 subscription_close='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/a[last()]'
-# 首次进入页面关闭弹窗元素
+# 首次进入页面关闭无用安全或广告弹窗元素
 dialog_close='/html/body/div[5]/div[2]/div[1]/a[last()]'
 # 搜索按钮元素
 search_button='//*[@id="wrap"]/div[2]/div[1]/div[1]/div[1]/a[last()]'
@@ -71,6 +71,7 @@ button_next='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/div/div/div/a[last(
 def parser_page():
     try:
         html=etree.HTML(bro.page_source)
+        # 检查有没有立即沟通按钮元素，有就点击，没有跳过
         if NodeExists(f'{chat_text}'):
             button_str=html.xpath(f'{chat_text}/text()')[0].strip().replace(" ","")
             if button_str=='立即沟通':
@@ -78,6 +79,7 @@ def parser_page():
                 # div=bro.find_elements_by_xpath(f'{chat_text}')[0]
                 div=bro.find_elements(by=By.XPATH, value=chat_text)[0]
                 bro.execute_script("arguments[0].click();", div)
+                # 判断弹窗中的某些发送信息，没有也不影响，就是个测试
                 if NodeExists(f'{max_text}'):
                     print(html.xpath(f'{max_text}')[0].strip().replace(" ",""))
                 else:
@@ -90,6 +92,7 @@ def parser_page():
         print('oops!页面解析失败')
 
 def click_title():
+    # 如果岗位标题元素存在，点它！
     if NodeExists(f'{title_text}'):
         # div_list=bro.find_elements_by_xpath(f'{title_text}')
         div_list=bro.find_elements(by=By.XPATH, value=title_text)
@@ -124,6 +127,10 @@ def NodeExists(xpath):
 
 # 加载拼接链接页面
 def click_page(page):
+    '''
+    :param: page:传输页码的形参
+    :type: page:num
+    '''
     while True:
         page+=1
         # 3:59～4:05 是不想联网的时间范围
@@ -145,15 +152,18 @@ def click_page(page):
             for i in range(1,seconds_num+1):
                 time.sleep(1)
                 print(f'共需要等待{seconds_num}秒，已经经过{i}秒')
+            # 点击搜索按钮元素，搜索
             bro.execute_script("arguments[0].click();", bro.find_element(by=By.XPATH, value=search_button))
             for i in range(1,seconds_num+1):
                 time.sleep(1)
                 print(f'共需要等待{seconds_num}秒，已经经过{i}秒')
+            # 如果是订阅元素，立刻关闭
             if NodeExists(f'{subscription_close}'):
                 # bro.execute_script("arguments[0].click();", bro.find_elements_by_xpath(f'{subscription_close}')[0])
                 bro.execute_script("arguments[0].click();", bro.find_elements(by=By.XPATH, value=subscription_close)[0])
             else:
                 print('oops!没有发现订阅广告')
+            # 页面分页的下一页按钮元素，如果存在点击下一页翻页
             if NodeExists(f'{button_next}'):
                 while True:
                     click_title()
@@ -220,6 +230,7 @@ if __name__ == "__main__":
         for i in range(1,seconds_num+1):
             time.sleep(1)
             print(f'共需要等待{seconds_num}秒，已经经过{i}秒')
+        # 如果有弹窗元素立刻关闭
         if NodeExists(f'{dialog_close}'):
             # bro.execute_script("arguments[0].click();", bro.find_elements_by_xpath(f'{dialog_close}')[0])
             # bro.execute_script("arguments[0].click();", bro.find_elements(by=By.XPATH, value=dialog_close)[0])
