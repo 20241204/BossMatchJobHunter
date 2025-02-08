@@ -123,16 +123,14 @@ def NodeExists(xpath):
       return False
 
 # 加载拼接链接页面
-def click_page():
-    # 总页数需，也是循环次数要访问查看
-    page=1
+def click_page(page):
     while True:
         page+=1
-        # 范围时间
+        # 3:59～4:05 是不想联网的时间范围
         d_start = datetime.datetime.strptime(str(datetime.datetime.now().date())+'3:59', '%Y-%m-%d%H:%M')
         d_end =  datetime.datetime.strptime(str(datetime.datetime.now().date())+'4:05', '%Y-%m-%d%H:%M')
         n_time = datetime.datetime.now()
-        # 判断当前时间是否在范围时间内
+        # 判断当前时间是否在不想联网的范围时间内
         if n_time > d_start and n_time<d_end:
             print(f'当前时间{n_time}在{d_start}和{d_end}之间，属于断网范围休息4分钟')
             time.sleep(240)
@@ -228,7 +226,9 @@ if __name__ == "__main__":
             pass
         else:
             print('oops!没有发现弹窗')
-        click_page()
+        # page 分页页码数变量初始化
+        # 比如，再次执行脚本，你不想从第1页从头循环点击立即沟通，就可以修改此变量
+        click_page(page=1)
 
     else:
         # 没有 cookie 文件，获取 cookie 
