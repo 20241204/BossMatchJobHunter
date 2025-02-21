@@ -45,8 +45,8 @@ jobs_name='ai标注'
 # 哈尔滨 自定义链接，互联网/AI->测试|运维 类型->全职 工作经验->应届生|无经验|1~3年 薪资->不限 学历->大专|本科
 # search_url=f'https://www.zhipin.com/web/geek/job?city=101050100&experience=101,104,102&degree=203,202&position=100301,100309,100303,100401,100405,100402&jobType=1901'
 
-# 厦门 互联网/AI->人工智能->数据标注/AI训练师 类型->全职 工作经验->不限经验 薪资->不限
-search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&position=130121&jobType=1901'
+# 厦门 职位类型->不限 类型->全职 工作经验->不限经验 薪资->不限
+search_url=f'https://www.zhipin.com/web/geek/job?query=ai%E6%A0%87%E6%B3%A8&city=101230200&experience=101&jobType=1901'
 
 # 当前目录 cookie 提取文件
 cookie_file_name='www.zhipin.com.json'
@@ -63,33 +63,94 @@ title_text='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/ul/li/div[1]/a/div[1
 # 点击立即沟通元素
 chat_text='//*[@id="main"]/div[1]/div/div/div/div[3]/div[1]/div/a[last()]'
 # 沟通界面，获取发送的信息元素
-max_text='/html/body/div[12]/div[2]/div[2]/div/div[1]/div[1]/ul/li/p/text()'
+head_img='/html/body/div[11]/div[2]/div[1]/h3/div/img'
+max_text1_element='/html/body/div[11]/div[2]/div[1]/h3/div/div/div[1]'
+max_text2_element='/html/body/div[11]/div[2]/div[1]/h3/div/div/div[2]'
+# 输入框元素
+input_textarea = '/html/body/div[11]/div[2]/div[2]/div/div[1]/div[2]/textarea'
+# 自定义发送消息内容
+custom_info='目前我人在黑龙江，如果当地消费租房不高，有到外省工作的意愿！'
+# 发送按钮元素
+send_button = '/html/body/div[11]/div[2]/div[2]/div/div[1]/div[2]/div'
 # 下一页按钮元素
 button_next='//*[@id="wrap"]/div[2]/div[2]/div/div[1]/div[1]/div/div/div/a[last()]'
 
 # 解析数据
 def parser_page():
     try:
-        html=etree.HTML(bro.page_source)
+        html = etree.HTML(bro.page_source)
         # 检查有没有立即沟通按钮元素，有就点击，没有跳过
         if NodeExists(f'{chat_text}'):
-            button_str=html.xpath(f'{chat_text}/text()')[0].strip().replace(" ","")
-            if button_str=='立即沟通':
+            button_str = html.xpath(f'{chat_text}/text()')[0].strip().replace(" ", "")
+            if button_str == '立即沟通':
                 print(button_str)
-                # div=bro.find_elements_by_xpath(f'{chat_text}')[0]
-                div=bro.find_elements(by=By.XPATH, value=chat_text)[0]
+                div = bro.find_elements(by=By.XPATH, value=chat_text)[0]
                 bro.execute_script("arguments[0].click();", div)
-                # 判断弹窗中的某些发送信息，没有也不影响，就是个测试
-                if NodeExists(f'{max_text}'):
-                    print(html.xpath(f'{max_text}')[0].strip().replace(" ",""))
-                else:
-                    print('-'*15+'没获取到文字，继续'+'-'*15)
+                time.sleep(2)  # 增加等待时间，确保弹窗加载完毕
+
+                # 处理头像、名字、等级
+                try:
+                    # 头像
+                    if NodeExists(f'{head_img}'):
+                        img_element = bro.find_element(by=By.XPATH, value=head_img)
+                        img_src = img_element.get_attribute('src')
+                        print(f'HR头像的src属性值: {img_src}')
+                    else:
+                        print('-'*15+'没获取到HR头像链接，继续'+'-'*15)
+                    
+                    # 名字
+                    if NodeExists(f'{max_text1_element}'):
+                        name_element = bro.find_element(by=By.XPATH, value=max_text1_element)
+                        hr_name = name_element.text.strip().replace(" ", "")
+                        print(f'HR名字: {hr_name}')
+                    else:
+                        print('-'*15+'没获取到HR名字，继续'+'-'*15)
+                    
+                    # 级别
+                    if NodeExists(f'{max_text2_element}'):
+                        name_element = bro.find_element(by=By.XPATH, value=max_text2_element)
+                        hr_name = name_element.text.strip().replace(" ", "")
+                        print(f'HR级别: {hr_name}')
+                    else:
+                        print('-'*15+'没获取到HR名字，继续'+'-'*15)
+                except Exception as e:
+                    print(f'处理头像、名字、等级时出错: {str(e)}')
+
+                # 输入自定义内容并发送
+                try:
+                    # 输入自定义沟通内容
+                    if NodeExists(f'{input_textarea}'):
+                        text_area = bro.find_elements(by=By.XPATH, value=input_textarea)[0]
+                        bro.execute_script("arguments[0].click();", text_area)
+                        text_area.send_keys(f'{custom_info}')
+                    else:
+                        print('-'*15+'没获取到输入框元素，无法输入自定义内容，继续'+'-'*15)
+                    
+                    # 点击发送按钮
+                    if NodeExists(f'{send_button}'):
+                        send_btn = bro.find_elements(by=By.XPATH, value=send_button)[0]
+                        bro.execute_script("arguments[0].click();", send_btn)
+                    else:
+                        print('-'*15+'没获取到发送按钮元素，无法点击发送自定义内容，继续'+'-'*15)
+                except Exception as e:
+                    print(f'处理输入自定义内容并发送时出错: {str(e)}')
+
             else:
                 print(button_str)
         else:
             print('oops!没有发现沟通按钮')
-    except:
-        print('oops!页面解析失败')
+    except Exception as e:
+        print(f'oops!页面解析失败, 错误信息: {str(e)}')
+
+# 判断节点是否存在捕获异常
+def NodeExists(xpath):
+    try:
+        bro.find_element(by=By.XPATH, value=xpath)
+        return True
+    except Exception as e:
+        print(f'元素 {xpath} 不存在，错误信息: {str(e)}')
+        return False
+
 
 def click_title():
     # 如果岗位标题元素存在，点它！
@@ -115,15 +176,6 @@ def click_title():
             
     else:
         print('列表标题不存在')
-
-# 判断节点是否存在捕获异常
-def NodeExists(xpath):
-   try:
-    #   bro.find_element_by_xpath(xpath)
-      bro.find_element(by=By.XPATH, value=xpath)
-      return True
-   except:
-      return False
 
 # 加载拼接链接页面
 def click_page(page):
@@ -190,7 +242,18 @@ if __name__ == "__main__":
     # caps = DesiredCapabilities().CHROME
     # caps["pageLoadStrategy"] ="none"
     # bro = webdriver.Chrome(options=option,desired_capabilities=caps)
-    bro = webdriver.Edge()
+    
+    # 下载指定版本浏览器并执行
+    # bro = webdriver.Edge()
+
+    # 使用已安装的Edge浏览器
+    options = webdriver.EdgeOptions()
+    options.use_chromium = True
+    # 确保浏览器路径正确
+    browser_path = "/Applications/Microsoft Edge Canary.app/Contents/MacOS/Microsoft Edge Canary"
+    options.binary_location = browser_path
+    bro = webdriver.Edge(options=options)
+
     # 实现规避检测
     # bro.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
     #     "source": """
